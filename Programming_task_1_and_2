@@ -1,0 +1,149 @@
+PROGRAMMING_TASK_1
+
+#matrix_multiplication_single_thread
+import random
+import time
+
+def generate_matrix(rows, cols):
+    return [[random.randint(0, 9) for _ in range(cols)] for _ in range(rows)]
+
+def matrix_multiply(A, B):
+    rows_A = len(A)
+    cols_A = len(A[0])
+    rows_B = len(B)
+    cols_B = len(B[0])
+
+    result = [[0 for _ in range(cols_B)] for _ in range(rows_A)]
+
+    for i in range(rows_A):
+        for j in range(cols_B):
+            sum_ = 0
+            for k in range(cols_A):
+                sum_ += A[i][k] * B[k][j]
+            result[i][j] = sum_
+
+    return result
+
+def time_matrix_multiply(size=1000):
+    print(f"Generating two random matrices of size {size} x {size}...")
+    A = generate_matrix(size, size)
+    B = generate_matrix(size, size)
+    print("Starting matrix multiplication...")
+    start_time = time.time()
+    C = matrix_multiply(A, B)
+    end_time = time.time()
+    print(f"Matrix multiplication completed in {end_time - start_time:.2f} seconds.")
+
+if __name__ == "__main__":
+   time_matrix_multiply(1000)
+
+
+#matrix_multiplication_parallel
+import random
+import time
+from multiprocessing import Pool, cpu_count
+
+def generate_matrix(rows, cols):
+    return [[random.randint(0, 9) for _ in range(cols)] for _ in range(rows)]
+
+def multiply_row(args):
+    A_row, B = args
+    result_row = []
+    cols_B = len(B[0])
+    for j in range(cols_B):
+        sum_ = 0
+        for k in range(len(B)):
+            sum_ += A_row[k] * B[k][j]
+        result_row.append(sum_)
+    return result_row
+
+def matrix_multiply_parallel(A, B):
+    rows_A = len(A)
+    args = [(A[i], B) for i in range(rows_A)]
+
+    with Pool(processes=cpu_count()) as pool:
+        result = pool.map(multiply_row, args)
+
+    return result
+
+def time_matrix_multiply_parallel(size=1000):
+    print(f"Generating two random matrices of size {size} x {size}...")
+    A = generate_matrix(size, size)
+    B = generate_matrix(size, size)
+    print("Starting parallel matrix multiplication...")
+    start_time = time.time()
+    C = matrix_multiply_parallel(A, B)
+    end_time = time.time()
+    print(f"Parallel matrix multiplication completed in {end_time - start_time:.2f} seconds.")
+
+if __name__ == "__main__":
+    time_matrix_multiply_parallel(1000)
+
+
+
+PROGRAMMING_TASK_2
+
+#include <iostream>
+#include <cmath>
+#include <vector>
+ 
+ using namespace std;
+ 
+ // Function to solve a quadratic equation ax^2 + bx + c = 0
+ void solveQuadratic(double a, double b, double c) {
+     double discriminant = b * b - 4 * a * c;
+     if (discriminant > 0) {
+         double root1 = (-b + sqrt(discriminant)) / (2 * a);
+         double root2 = (-b - sqrt(discriminant)) / (2 * a);
+         cout << "Roots are real and different: " << root1 << " and " << root2 << endl;
+     } else if (discriminant == 0) {
+         double root = -b / (2 * a);
+         cout << "Roots are real and the same: " << root << endl;
+     } else {
+         cout << "Roots are complex and different." << endl;
+     }
+ }
+ 
+ 
+ // Function to reverse an array of size 10
+ void reverseArray(int arr[], int size) {
+     for (int i = 0; i < size / 2; i++) {
+         swap(arr[i], arr[size - i - 1]);
+     }
+     cout << "Reversed array: ";
+     for (int i = 0; i < size; i++) {
+         cout << arr[i] << " ";
+     }
+     cout << endl;
+ }
+ 
+
+ // Function to check if a number is a power of 2
+bool isPowerOfTwo(int n) {
+    return (n > 0) && ((n & (n - 1)) == 0);
+}
+
+
+int main() {
+    // Solve a quadratic equation example
+    cout << "Solving quadratic equation 2x^2 + 4x + 2 = 0" << endl;
+    solveQuadratic(2, 4, 2);
+    
+    // Reverse an array example
+    int arr[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    cout << "Original array: ";
+    for (int i = 0; i < 10; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    reverseArray(arr, 10);
+    
+    // Check if a number is a power of 2
+    int number = 16;
+    if (isPowerOfTwo(number)) {
+        cout << number << " is a power of 2." << endl;
+    } else {
+        cout << number << " is not a power of 2." << endl;
+    }
+
+    return 0;
